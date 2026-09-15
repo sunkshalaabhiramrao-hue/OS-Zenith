@@ -1,50 +1,46 @@
 #include <stdio.h>
 #include <unistd.h>
-#include <sys/wait.h>
 #include <stdlib.h>
+#include <sys/wait.h>
 
-int main() {
-    pid_t child1, child2, child3;
+int main()
+{
+    pid_t c1, c2, c3;
 
-    // Create first child
-    child1 = fork();
+    c1 = fork();
 
-    if (child1 == 0) {
-        printf("Child 1: PID = %d\n", getpid());
+    if(c1 == 0){
+        sleep(3);
+        printf("Child 1 finished\n");
+        exit(0);
+    }
+
+    c2 = fork();
+
+    if(c2 == 0){
         sleep(2);
-        printf("Child 1 finished.\n");
-        exit(10);
+        printf("Child 2 finished\n");
+        exit(0);
     }
 
-    // Create second child
-    child2 = fork();
+    c3 = fork();
 
-    if (child2 == 0) {
-        printf("Child 2: PID = %d\n", getpid());
-        sleep(4);
-        printf("Child 2 finished.\n");
-        exit(20);
+    if(c3 == 0){
+        sleep(3);
+        printf("Child 3 finished\n");
+        exit(0);
     }
 
-    // Create third child
-    child3 = fork();
-
-    if (child3 == 0) {
-        printf("Child 3: PID = %d\n", getpid());
-        sleep(1);
-        printf("Child 3 finished.\n");
-        exit(30);
-    }
-
-    // Parent waits for a specific child
-    waitpid(child2, NULL, 0);
-    printf("Parent: Child 2 completed using waitpid().\n");
-
-    // Parent waits for remaining children
-    wait(NULL);
+    printf("Parent waiting for child\n");
     wait(NULL);
 
-    printf("All child processes completed.\n");
+    printf("Parent waiting for child 1\n");
+    waitpid(c1, NULL, 0);
+
+    printf("Parent waiting for child 2\n");
+    waitpid(c2, NULL, 0);
+
+    printf("All Childern finished\n");
 
     return 0;
 }
